@@ -1,30 +1,52 @@
 "use strict"
-// You’re going to want functions that can take a location
-//  and return the weather data for that location.
-//  For now, just console.log() the information.
-
 /**
  * Gets data from visual crossing
  * @param {string} location - The location to get the weather from
  * @returns {JSON} The JSON file that the API returns
  */
 export async function getWeatherData(location) {
-    const API_KEY = 'F7DAMFZQK663JES2VYHE3SHKU';  // this is public and free to use
-    const response = await fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}?key=${API_KEY}`);
-    const weatherData = await response.json();
-    return weatherData;
+  if (location.length === 0){
+    throw new Error('No location provided')
+  }
+  
+  const API_KEY = 'F7DAMFZQK663JES2VYHE3SHKU';  // this is public and free to use
+  const response = await fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}?key=${API_KEY}`);
+  if (!response.ok) {
+    throw new Error(`Location "${location}" not found`);
+  }
+  const weatherData = await response.json();
+  return weatherData;
 }
+
 /** 
  * Gets current weather data
  * @param {string} location - The location to get the weather from
- * @returns {string} humidity - The relevant fields
+ * @returns {object}  - The relevant fields
  */
-async function getCurrentData(location){
-  const   weatherData = await getWeatherData(location);
-  const current = weatherData.currentConditions;
+export async function getCurrentData(location) {
+  const weatherData = await getWeatherData(location);
   // destuctoring still need to understand this
-  const {  temp, humidity , uvindex} = current;
-  return console.log( `${location} stats:  temp: ${temp}, humidity: ${humidity}% , uvindex ${uvindex}`)
+  const current = (({ temp, feelslike, conditions, humidity, uvindex, windspeed } )=>
+     ({ temp, feelslike, conditions, humidity, uvindex, windspeed }))(weatherData.currentConditions);
+  return current
+}
+
+/** 
+ * Gets  weather for next 3 days
+ * @param {string} location - The location to get the weather from
+ * @returns {Array}] with The relevant fields, each day is an object
+ */
+
+export async function getForecast(location) {
+  const weatherData = await getWeatherData(location);
+  const weatherArr = [];
+  for (let i = 1; i <= 3; i++) {
+    // create an object and push it to the array
+    const forecast = (({ datetime, tempmax, tempmin, sunrise, sunset, conditions }) =>
+       ({ datetime, tempmax, tempmin, sunrise, sunset, conditions }))(weatherData.days[i]);
+    weatherArr.push(forecast)
+  }
+  return weatherArr;
 }
 
 const weatherEmojiMap = {
@@ -42,5 +64,3 @@ const weatherEmojiMap = {
   // Add other mappings as needed based on the Visual Crossing documentation
 };
 
-
-getCurrentData('london');
