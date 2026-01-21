@@ -32,7 +32,7 @@ export async function getCurrentData(location) {
 }
 
 /** 
- * Gets  weather for next 3 days
+ * Gets weather for next 3 days
  * @param {string} location - The location to get the weather from
  * @returns {Array}] with The relevant fields, each day is an object
  */
