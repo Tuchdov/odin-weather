@@ -27,17 +27,19 @@ export async function getWeatherData(location) {
  */
 export async function getCurrentData(location) {
   const weatherData = await getWeatherData(location);
-  // destuctoring still need to understand this
-  const current =
-    (({ temp, feelslike, conditions, humidity, uvindex, windspeed }) => ({
-      temp,
-      feelslike,
-      conditions,
-      humidity,
-      uvindex,
-      windspeed,
-    }))(weatherData.currentConditions);
-  return current;
+  const { resolvedAddress } = weatherData;
+  const { temp, feelslike, conditions, humidity, uvindex, windspeed } =
+    weatherData.currentConditions;
+
+  return {
+    resolvedAddress,
+    temp,
+    feelslike,
+    conditions,
+    humidity,
+    uvindex,
+    windspeed,
+  };
 }
 
 /**

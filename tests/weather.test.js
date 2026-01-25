@@ -63,7 +63,7 @@ Deno.test("getCurrentData - has exactly the right keys", () => {
   }
 
   // Check no extra keys
-  assertEquals(actualKeys.length, 6, "Should have exactly 6 keys, no more");
+  assertEquals(actualKeys.length, 7, "Should have exactly 7 keys, no more");
 });
 
 Deno.test("getCurrentData - values are correct types", () => {
