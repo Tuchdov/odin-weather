@@ -13,7 +13,10 @@
     type="text" 
     id="location-input" 
     name="location" 
+    pattern="[A-Za-z\s]+"
+    minlength="2"
     placeholder="Enter city name..."
+    title="Letters and spaces only"
     required
   >
   <button type="submit">Search</button>
