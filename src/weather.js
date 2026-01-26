@@ -28,7 +28,7 @@ export async function getWeatherData(location) {
 export async function getCurrentData(location) {
   const weatherData = await getWeatherData(location);
   const { resolvedAddress } = weatherData;
-  const { temp, feelslike, conditions, humidity, uvindex, windspeed } =
+  const { temp, feelslike, conditions, humidity, uvindex, windspeed, icon } =
     weatherData.currentConditions;
 
   return {
@@ -39,6 +39,7 @@ export async function getCurrentData(location) {
     humidity,
     uvindex,
     windspeed,
+    icon
   };
 }
 
@@ -54,30 +55,18 @@ export async function getForecast(location) {
   for (let i = 1; i <= 3; i++) {
     // create an object and push it to the array
     const forecast =
-      (({ datetime, tempmax, tempmin, sunrise, sunset, conditions }) => ({
+      (({ datetime, tempmax, tempmin, sunrise, sunset, conditions, icon  }) => ({
         datetime,
         tempmax,
         tempmin,
         sunrise,
         sunset,
         conditions,
+        icon
       }))(weatherData.days[i]);
     weatherArr.push(forecast);
   }
   return weatherArr;
 }
 
-const weatherEmojiMap = {
-  "clear-day": "☀️",
-  "clear-night": "🌙",
-  "partly-cloudy-day": "⛅",
-  "partly-cloudy-night": "☁️",
-  "cloudy": "☁️",
-  "rain": "🌧️",
-  "showers": "🌦️",
-  "thunderstorm": "⛈️",
-  "snow": "❄️",
-  "wind": "💨",
-  "fog": "🌫️",
-  // Add other mappings as needed based on the Visual Crossing documentation
-};
+
