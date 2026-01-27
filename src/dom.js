@@ -111,3 +111,12 @@ const weatherEmojiMap = {
   "fog": "🌫️",
   // Add other mappings as needed based on the Visual Crossing documentation
 };
+
+export function showError(messege){
+  const formError = document.querySelector('.form-error');
+  formError.textContent = messege;
+}
+
+export function clearError() {
+  showError('');
+}
