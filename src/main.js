@@ -1,18 +1,22 @@
 import './style.css'
 
 
-import * as dom from './dom.js' 
-import * as weather  from './weather.js' 
+import * as dom from './dom.js'
+import * as weather  from './weather.js'
 
-// So first I put the get weather data inside the init
-// but how do I do the rendering 
-// because I need to render functions inside and not one?
+// Store current weather data for re-rendering when units change
+let currentWeatherData = null;
+let currentForecastData = null;
 
 dom.initLocationForm( async (location) => {
     try {
     dom.clearError()
     const  current = await weather.getCurrentData(location);
     const   forecast = await weather.getForecast(location);
+
+    // Store data for unit toggle
+    currentWeatherData = current;
+    currentForecastData = forecast;
 
     dom.renderCurrentWeather(current);
     dom.renderForecast(forecast);
@@ -21,4 +25,13 @@ dom.initLocationForm( async (location) => {
        dom.showError(error.message)
     }
 })
+
+// Initialize unit toggle button
+dom.initUnitToggle((newUnit) => {
+  // Re-render with new units if we have data
+  if (currentWeatherData && currentForecastData) {
+    dom.renderCurrentWeather(currentWeatherData);
+    dom.renderForecast(currentForecastData);
+  }
+});
 
