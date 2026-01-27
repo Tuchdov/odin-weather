@@ -1,5 +1,32 @@
 "use strict";
 
+// Unit system state
+let currentUnit = localStorage.getItem('unitPreference') || 'imperial';
+
+// Conversion utility functions
+function fahrenheitToCelsius(temp) {
+  return Math.round((temp - 32) * 5 / 9);
+}
+
+function mphToKmh(speed) {
+  return Math.round(speed * 1.60934);
+}
+
+// Formatting functions
+function formatTemperature(temp, unit) {
+  if (unit === 'metric') {
+    return `${fahrenheitToCelsius(temp)}°C`;
+  }
+  return `${temp}°F`;
+}
+
+function formatWindSpeed(speed, unit) {
+  if (unit === 'metric') {
+    return `${mphToKmh(speed)} km/h`;
+  }
+  return `${speed} mph`;
+}
+
 /**
  * Renders current weather data to the DOM
  * @param {Object} data - Current weather data
@@ -17,12 +44,12 @@ export function renderCurrentWeather(data) {
   const emoji = weatherEmojiMap[data.icon] || '🌡️';
 
   section.querySelector('.location').textContent = data.resolvedAddress;
-  section.querySelector('.temperature').textContent = data.temp;
-  section.querySelector('.feelslike').textContent = data.feelslike;
+  section.querySelector('.temperature').textContent = `Temperature: ${formatTemperature(data.temp, currentUnit)}`;
+  section.querySelector('.feelslike').textContent = `Feels Like: ${formatTemperature(data.feelslike, currentUnit)}`;
   section.querySelector('.conditions').textContent = `${emoji} ${data.conditions}`;
-  section.querySelector('.humidity').textContent = data.humidity;
-  section.querySelector('.uvindex').textContent = data.uvindex;
-  section.querySelector('.windspeed').textContent = data.windspeed;
+  section.querySelector('.humidity').textContent = `Humidity: ${data.humidity}%`;
+  section.querySelector('.uvindex').textContent = `UV Index: ${data.uvindex}`;
+  section.querySelector('.windspeed').textContent = `Wind Speed: ${formatWindSpeed(data.windspeed, currentUnit)}`;
 }
 
 /**
@@ -49,11 +76,11 @@ export function renderForecast(data) {
 
     const tempmax = document.createElement('p');
     tempmax.className = 'temp-high';
-    tempmax.textContent = day.tempmax;
+    tempmax.textContent = `High: ${formatTemperature(day.tempmax, currentUnit)}`;
 
     const tempmin = document.createElement('p');
     tempmin.className = 'temp-low';
-    tempmin.textContent = day.tempmin;
+    tempmin.textContent = `Low: ${formatTemperature(day.tempmin, currentUnit)}`;
 
     const conditions = document.createElement('p');
     conditions.className = 'conditions';
@@ -61,11 +88,11 @@ export function renderForecast(data) {
 
     const sunrise = document.createElement('p');
     sunrise.className = 'sunrise';
-    sunrise.textContent = day.sunrise;
+    sunrise.textContent = `Sunrise: ${day.sunrise}`;
 
     const sunset = document.createElement('p');
     sunset.className = 'sunset';
-    sunset.textContent = day.sunset;
+    sunset.textContent = `Sunset: ${day.sunset}`;
 
     li.appendChild(datetime);
     li.appendChild(tempmax);
@@ -119,4 +146,33 @@ export function showError(messege){
 
 export function clearError() {
   showError('');
+}
+
+/**
+ * Initializes the unit toggle button
+ * @param {Function} callback - Function to call when unit is toggled, receives new unit as parameter
+ */
+export function initUnitToggle(callback) {
+  const toggleBtn = document.getElementById('unit-toggle-btn');
+  
+  // Set initial button text based on current unit
+  toggleBtn.textContent = currentUnit === 'imperial'
+    ? 'Switch to Metric (°C, km/h)'
+    : 'Switch to Imperial (°F, mph)';
+  
+  toggleBtn.addEventListener('click', () => {
+    // Switch unit system
+    currentUnit = currentUnit === 'imperial' ? 'metric' : 'imperial';
+    
+    // Update button text
+    toggleBtn.textContent = currentUnit === 'imperial'
+      ? 'Switch to Metric (°C, km/h)'
+      : 'Switch to Imperial (°F, mph)';
+    
+    // Save preference
+    localStorage.setItem('unitPreference', currentUnit);
+    
+    // Call callback to re-render with new units
+    callback(currentUnit);
+  });
 }
