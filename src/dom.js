@@ -180,11 +180,13 @@ export function renderForecast(data) {
 
   data.forEach(day => {
     const emoji = weatherEmojiMap[day.icon] || '🌡️';
+    const dateLabel = formatDate(day.datetime);
 
     const card = document.createElement('article');
     card.className = 'card card--forecast';
+    card.setAttribute('aria-label', `Forecast for ${dateLabel}`);
     card.innerHTML = `
-      <p class="date">${formatDate(day.datetime)}</p>
+      <p class="date">${dateLabel}</p>
       <p class="conditions">${emoji} ${day.conditions}</p>
       <div class="temps">
         <span class="temp-high">H: ${formatTemperature(day.tempmax, currentUnit)}</span>
