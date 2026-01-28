@@ -3,6 +3,36 @@
 // Unit system state
 let currentUnit = localStorage.getItem('unitPreference') || 'imperial';
 
+// Weather icon to theme mapping
+const weatherThemes = {
+  'clear-day': 'theme-sunny',
+  'clear-night': 'theme-night',
+  'partly-cloudy-day': 'theme-cloudy',
+  'partly-cloudy-night': 'theme-night',
+  'cloudy': 'theme-cloudy',
+  'rain': 'theme-rainy',
+  'showers': 'theme-rainy',
+  'thunderstorm': 'theme-stormy',
+  'snow': 'theme-snowy',
+  'wind': 'theme-cloudy',
+  'fog': 'theme-foggy'
+};
+
+// Weather emoji mapping
+const weatherEmojiMap = {
+  "clear-day": "☀️",
+  "clear-night": "🌙",
+  "partly-cloudy-day": "⛅",
+  "partly-cloudy-night": "☁️",
+  "cloudy": "☁️",
+  "rain": "🌧️",
+  "showers": "🌦️",
+  "thunderstorm": "⛈️",
+  "snow": "❄️",
+  "wind": "💨",
+  "fog": "🌫️",
+};
+
 // Conversion utility functions
 function fahrenheitToCelsius(temp) {
   return Math.round((temp - 32) * 5 / 9);
@@ -17,14 +47,84 @@ function formatTemperature(temp, unit) {
   if (unit === 'metric') {
     return `${fahrenheitToCelsius(temp)}°C`;
   }
-  return `${temp}°F`;
+  return `${Math.round(temp)}°F`;
 }
 
 function formatWindSpeed(speed, unit) {
   if (unit === 'metric') {
     return `${mphToKmh(speed)} km/h`;
   }
-  return `${speed} mph`;
+  return `${Math.round(speed)} mph`;
+}
+
+/**
+ * Sets the weather theme on the body based on weather icon
+ * @param {string} icon - Weather icon code from API
+ */
+export function setWeatherTheme(icon) {
+  const body = document.body;
+
+  // Remove all existing theme classes
+  Object.values(weatherThemes).forEach(theme => {
+    body.classList.remove(theme);
+  });
+
+  // Add new theme class
+  const themeClass = weatherThemes[icon] || 'theme-sunny';
+  body.classList.add(themeClass);
+}
+
+/**
+ * Shows skeleton loading UI
+ */
+export function showSkeletonLoading() {
+  const weatherContent = document.querySelector('.weather-content');
+  const currentCard = document.querySelector('.card--current');
+  const forecastGrid = document.querySelector('.forecast-grid');
+
+  weatherContent.classList.add('is-loading');
+
+  // Create skeleton for current weather
+  currentCard.innerHTML = `
+    <div class="skeleton-current">
+      <div class="skeleton skeleton--text-lg" style="width: 40%;"></div>
+      <div class="skeleton-main">
+        <div class="skeleton skeleton--text-4xl"></div>
+        <div class="skeleton skeleton--icon"></div>
+      </div>
+      <div class="skeleton skeleton--text" style="width: 30%;"></div>
+      <div class="skeleton-details">
+        <div class="skeleton skeleton--block"></div>
+        <div class="skeleton skeleton--block"></div>
+        <div class="skeleton skeleton--block"></div>
+        <div class="skeleton skeleton--block"></div>
+      </div>
+    </div>
+  `;
+
+  // Create skeleton for forecast cards
+  forecastGrid.innerHTML = '';
+  for (let i = 0; i < 3; i++) {
+    const skeletonCard = document.createElement('article');
+    skeletonCard.className = 'card card--forecast';
+    skeletonCard.innerHTML = `
+      <div class="skeleton-forecast">
+        <div class="skeleton skeleton--text-lg" style="width: 60%;"></div>
+        <div class="skeleton skeleton--icon"></div>
+        <div class="skeleton skeleton--text" style="width: 80%;"></div>
+        <div class="skeleton skeleton--text-sm" style="width: 100%;"></div>
+      </div>
+    `;
+    forecastGrid.appendChild(skeletonCard);
+  }
+}
+
+/**
+ * Hides skeleton loading UI
+ */
+export function hideSkeletonLoading() {
+  const weatherContent = document.querySelector('.weather-content');
+  weatherContent.classList.remove('is-loading');
 }
 
 /**
@@ -37,23 +137,34 @@ function formatWindSpeed(speed, unit) {
  * @param {number} data.humidity - Humidity percentage
  * @param {number} data.uvindex - UV index
  * @param {number} data.windspeed - Wind speed
+ * @param {string} data.icon - Weather icon code
  */
 export function renderCurrentWeather(data) {
-  const section = document.querySelector('.current-weather');
-  // add fallback icon
+  const card = document.querySelector('.card--current');
   const emoji = weatherEmojiMap[data.icon] || '🌡️';
 
-  section.querySelector('.location').textContent = data.resolvedAddress;
-  section.querySelector('.temperature').textContent = `Temperature: ${formatTemperature(data.temp, currentUnit)}`;
-  section.querySelector('.feelslike').textContent = `Feels Like: ${formatTemperature(data.feelslike, currentUnit)}`;
-  section.querySelector('.conditions').textContent = `${emoji} ${data.conditions}`;
-  section.querySelector('.humidity').textContent = `Humidity: ${data.humidity}%`;
-  section.querySelector('.uvindex').textContent = `UV Index: ${data.uvindex}`;
-  section.querySelector('.windspeed').textContent = `Wind Speed: ${formatWindSpeed(data.windspeed, currentUnit)}`;
+  // Set weather theme
+  setWeatherTheme(data.icon);
+
+  // Render card content
+  card.innerHTML = `
+    <h2 class="location">${data.resolvedAddress}</h2>
+    <div class="current-main">
+      <span class="temperature">${formatTemperature(data.temp, currentUnit)}</span>
+      <span class="conditions-icon" aria-hidden="true">${emoji}</span>
+    </div>
+    <p class="conditions">${data.conditions}</p>
+    <div class="current-details">
+      <p class="feelslike">Feels Like: ${formatTemperature(data.feelslike, currentUnit)}</p>
+      <p class="humidity">Humidity: ${data.humidity}%</p>
+      <p class="uvindex">UV Index: ${data.uvindex}</p>
+      <p class="windspeed">Wind: ${formatWindSpeed(data.windspeed, currentUnit)}</p>
+    </div>
+  `;
 }
 
 /**
- * Renders forecast data to the DOM
+ * Renders forecast data to the DOM as individual cards
  * @param {Array<Object>} data - Array of forecast days
  * @param {string} data[].datetime - Date string
  * @param {number} data[].tempmax - Maximum temperature
@@ -61,54 +172,74 @@ export function renderCurrentWeather(data) {
  * @param {string} data[].conditions - Weather conditions
  * @param {string} data[].sunrise - Sunrise time
  * @param {string} data[].sunset - Sunset time
+ * @param {string} data[].icon - Weather icon code
  */
 export function renderForecast(data) {
-  const list = document.querySelector('.forecast-list');
-  list.innerHTML = '';
+  const grid = document.querySelector('.forecast-grid');
+  grid.innerHTML = '';
+
   data.forEach(day => {
-    const li = document.createElement('li');
-    li.className = 'forecast-day';
     const emoji = weatherEmojiMap[day.icon] || '🌡️';
 
-    const datetime = document.createElement('p');
-    datetime.className = 'date';
-    datetime.textContent = day.datetime;
+    const card = document.createElement('article');
+    card.className = 'card card--forecast';
+    card.innerHTML = `
+      <p class="date">${formatDate(day.datetime)}</p>
+      <p class="conditions">${emoji} ${day.conditions}</p>
+      <div class="temps">
+        <span class="temp-high">H: ${formatTemperature(day.tempmax, currentUnit)}</span>
+        <span class="temp-low">L: ${formatTemperature(day.tempmin, currentUnit)}</span>
+      </div>
+      <div class="sun-times">
+        <span class="sunrise">☀️ ${formatTime(day.sunrise)}</span>
+        <span class="sunset">🌙 ${formatTime(day.sunset)}</span>
+      </div>
+    `;
 
-    const tempmax = document.createElement('p');
-    tempmax.className = 'temp-high';
-    tempmax.textContent = `High: ${formatTemperature(day.tempmax, currentUnit)}`;
-
-    const tempmin = document.createElement('p');
-    tempmin.className = 'temp-low';
-    tempmin.textContent = `Low: ${formatTemperature(day.tempmin, currentUnit)}`;
-
-    const conditions = document.createElement('p');
-    conditions.className = 'conditions';
-    conditions.textContent =  `${emoji} ${day.conditions}`;
-
-    const sunrise = document.createElement('p');
-    sunrise.className = 'sunrise';
-    sunrise.textContent = `Sunrise: ${day.sunrise}`;
-
-    const sunset = document.createElement('p');
-    sunset.className = 'sunset';
-    sunset.textContent = `Sunset: ${day.sunset}`;
-
-    li.appendChild(datetime);
-    li.appendChild(tempmax);
-    li.appendChild(tempmin);
-    li.appendChild(conditions);
-    li.appendChild(sunrise);
-    li.appendChild(sunset);
-
-    list.appendChild(li);
+    grid.appendChild(card);
   });
 }
 
 /**
+ * Formats date string to readable format
+ * @param {string} dateStr - Date string (YYYY-MM-DD)
+ * @returns {string} Formatted date
+ */
+function formatDate(dateStr) {
+  const date = new Date(dateStr + 'T00:00:00');
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  if (date.toDateString() === today.toDateString()) {
+    return 'Today';
+  } else if (date.toDateString() === tomorrow.toDateString()) {
+    return 'Tomorrow';
+  }
+
+  return date.toLocaleDateString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric'
+  });
+}
+
+/**
+ * Formats time string to 12-hour format
+ * @param {string} timeStr - Time string (HH:MM:SS)
+ * @returns {string} Formatted time
+ */
+function formatTime(timeStr) {
+  const [hours, minutes] = timeStr.split(':');
+  const hour = parseInt(hours, 10);
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  const hour12 = hour % 12 || 12;
+  return `${hour12}:${minutes} ${ampm}`;
+}
+
+/**
  * Initializes the location search form with validation
- * @param {Function} callback -  a place holder name, for a function you call that function and it will use the
- * input.checkValidity as an argument to this function 
+ * @param {Function} callback - Function to call with valid location input
  */
 export function initLocationForm(callback) {
   const form = document.querySelector('.location-form');
@@ -124,26 +255,18 @@ export function initLocationForm(callback) {
   });
 }
 
-const weatherEmojiMap = {
-  "clear-day": "☀️",
-  "clear-night": "🌙",
-  "partly-cloudy-day": "⛅",
-  "partly-cloudy-night": "☁️",
-  "cloudy": "☁️",
-  "rain": "🌧️",
-  "showers": "🌦️",
-  "thunderstorm": "⛈️",
-  "snow": "❄️",
-  "wind": "💨",
-  "fog": "🌫️",
-  // Add other mappings as needed based on the Visual Crossing documentation
-};
-
-export function showError(messege){
+/**
+ * Shows an error message
+ * @param {string} message - Error message to display
+ */
+export function showError(message) {
   const formError = document.querySelector('.form-error');
-  formError.textContent = messege;
+  formError.textContent = message;
 }
 
+/**
+ * Clears the error message
+ */
 export function clearError() {
   showError('');
 }
@@ -154,24 +277,24 @@ export function clearError() {
  */
 export function initUnitToggle(callback) {
   const toggleBtn = document.getElementById('unit-toggle-btn');
-  
+
   // Set initial button text based on current unit
   toggleBtn.textContent = currentUnit === 'imperial'
     ? 'Switch to Metric (°C, km/h)'
     : 'Switch to Imperial (°F, mph)';
-  
+
   toggleBtn.addEventListener('click', () => {
     // Switch unit system
     currentUnit = currentUnit === 'imperial' ? 'metric' : 'imperial';
-    
+
     // Update button text
     toggleBtn.textContent = currentUnit === 'imperial'
       ? 'Switch to Metric (°C, km/h)'
       : 'Switch to Imperial (°F, mph)';
-    
+
     // Save preference
     localStorage.setItem('unitPreference', currentUnit);
-    
+
     // Call callback to re-render with new units
     callback(currentUnit);
   });
