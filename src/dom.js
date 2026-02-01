@@ -1,21 +1,21 @@
 "use strict";
 
 // Unit system state
-let currentUnit = localStorage.getItem('unitPreference') || 'imperial';
+let currentUnit = localStorage.getItem("unitPreference") || "imperial";
 
 // Weather icon to theme mapping
 const weatherThemes = {
-  'clear-day': 'theme-sunny',
-  'clear-night': 'theme-night',
-  'partly-cloudy-day': 'theme-cloudy',
-  'partly-cloudy-night': 'theme-night',
-  'cloudy': 'theme-cloudy',
-  'rain': 'theme-rainy',
-  'showers': 'theme-rainy',
-  'thunderstorm': 'theme-stormy',
-  'snow': 'theme-snowy',
-  'wind': 'theme-cloudy',
-  'fog': 'theme-foggy'
+  "clear-day": "theme-sunny",
+  "clear-night": "theme-night",
+  "partly-cloudy-day": "theme-cloudy",
+  "partly-cloudy-night": "theme-night",
+  "cloudy": "theme-cloudy",
+  "rain": "theme-rainy",
+  "showers": "theme-rainy",
+  "thunderstorm": "theme-stormy",
+  "snow": "theme-snowy",
+  "wind": "theme-cloudy",
+  "fog": "theme-foggy",
 };
 
 // Weather emoji mapping
@@ -44,14 +44,14 @@ function mphToKmh(speed) {
 
 // Formatting functions
 function formatTemperature(temp, unit) {
-  if (unit === 'metric') {
+  if (unit === "metric") {
     return `${fahrenheitToCelsius(temp)}°C`;
   }
   return `${Math.round(temp)}°F`;
 }
 
 function formatWindSpeed(speed, unit) {
-  if (unit === 'metric') {
+  if (unit === "metric") {
     return `${mphToKmh(speed)} km/h`;
   }
   return `${Math.round(speed)} mph`;
@@ -65,12 +65,12 @@ export function setWeatherTheme(icon) {
   const body = document.body;
 
   // Remove all existing theme classes
-  Object.values(weatherThemes).forEach(theme => {
+  Object.values(weatherThemes).forEach((theme) => {
     body.classList.remove(theme);
   });
 
   // Add new theme class
-  const themeClass = weatherThemes[icon] || 'theme-sunny';
+  const themeClass = weatherThemes[icon] || "theme-sunny";
   body.classList.add(themeClass);
 }
 
@@ -78,14 +78,14 @@ export function setWeatherTheme(icon) {
  * Shows skeleton loading UI
  */
 export function showSkeletonLoading() {
-  const weatherContent = document.querySelector('.weather-content');
-  const currentCard = document.querySelector('.card--current');
-  const forecastGrid = document.querySelector('.forecast-grid');
+  const weatherContent = document.querySelector(".weather-content");
+  const currentCard = document.querySelector(".card--current");
+  const forecastGrid = document.querySelector(".forecast-grid");
 
-  weatherContent.classList.add('is-loading');
+  weatherContent.classList.add("is-loading");
 
   // Preserve the unit toggle button
-  const toggle = currentCard.querySelector('.unit-toggle');
+  const toggle = currentCard.querySelector(".unit-toggle");
 
   // Create skeleton for current weather
   currentCard.innerHTML = `
@@ -111,10 +111,10 @@ export function showSkeletonLoading() {
   }
 
   // Create skeleton for forecast cards
-  forecastGrid.innerHTML = '';
+  forecastGrid.innerHTML = "";
   for (let i = 0; i < 3; i++) {
-    const skeletonCard = document.createElement('article');
-    skeletonCard.className = 'card card--forecast';
+    const skeletonCard = document.createElement("article");
+    skeletonCard.className = "card card--forecast";
     skeletonCard.innerHTML = `
       <div class="skeleton-forecast">
         <div class="skeleton skeleton--text-lg" style="width: 60%;"></div>
@@ -131,8 +131,8 @@ export function showSkeletonLoading() {
  * Hides skeleton loading UI
  */
 export function hideSkeletonLoading() {
-  const weatherContent = document.querySelector('.weather-content');
-  weatherContent.classList.remove('is-loading');
+  const weatherContent = document.querySelector(".weather-content");
+  weatherContent.classList.remove("is-loading");
 }
 
 /**
@@ -148,28 +148,34 @@ export function hideSkeletonLoading() {
  * @param {string} data.icon - Weather icon code
  */
 export function renderCurrentWeather(data) {
-  const card = document.querySelector('.card--current');
-  const emoji = weatherEmojiMap[data.icon] || '🌡️';
+  const card = document.querySelector(".card--current");
+  const emoji = weatherEmojiMap[data.icon] || "🌡️";
 
   // Set weather theme
   setWeatherTheme(data.icon);
 
   // Preserve the unit toggle button before re-rendering
-  const toggle = card.querySelector('.unit-toggle');
+  const toggle = card.querySelector(".unit-toggle");
 
   // Render card content
   card.innerHTML = `
     <h2 class="location">${data.resolvedAddress}</h2>
     <div class="current-main">
-      <span class="temperature">${formatTemperature(data.temp, currentUnit)}</span>
+      <span class="temperature">${
+    formatTemperature(data.temp, currentUnit)
+  }</span>
       <span class="conditions-icon" aria-hidden="true">${emoji}</span>
     </div>
     <p class="conditions">${data.conditions}</p>
     <div class="current-details">
-      <p class="feelslike">Feels Like: ${formatTemperature(data.feelslike, currentUnit)}</p>
+      <p class="feelslike">Feels Like: ${
+    formatTemperature(data.feelslike, currentUnit)
+  }</p>
       <p class="humidity">Humidity: ${data.humidity}%</p>
       <p class="uvindex">UV Index: ${data.uvindex}</p>
-      <p class="windspeed">Wind: ${formatWindSpeed(data.windspeed, currentUnit)}</p>
+      <p class="windspeed">Wind: ${
+    formatWindSpeed(data.windspeed, currentUnit)
+  }</p>
     </div>
   `;
 
@@ -191,22 +197,26 @@ export function renderCurrentWeather(data) {
  * @param {string} data[].icon - Weather icon code
  */
 export function renderForecast(data) {
-  const grid = document.querySelector('.forecast-grid');
-  grid.innerHTML = '';
+  const grid = document.querySelector(".forecast-grid");
+  grid.innerHTML = "";
 
-  data.forEach(day => {
-    const emoji = weatherEmojiMap[day.icon] || '🌡️';
+  data.forEach((day) => {
+    const emoji = weatherEmojiMap[day.icon] || "🌡️";
     const dateLabel = formatDate(day.datetime);
 
-    const card = document.createElement('article');
-    card.className = 'card card--forecast';
-    card.setAttribute('aria-label', `Forecast for ${dateLabel}`);
+    const card = document.createElement("article");
+    card.className = "card card--forecast";
+    card.setAttribute("aria-label", `Forecast for ${dateLabel}`);
     card.innerHTML = `
       <p class="date">${dateLabel}</p>
       <p class="conditions">${emoji} ${day.conditions}</p>
       <div class="temps">
-        <span class="temp-high">H: ${formatTemperature(day.tempmax, currentUnit)}</span>
-        <span class="temp-low">L: ${formatTemperature(day.tempmin, currentUnit)}</span>
+        <span class="temp-high">H: ${
+      formatTemperature(day.tempmax, currentUnit)
+    }</span>
+        <span class="temp-low">L: ${
+      formatTemperature(day.tempmin, currentUnit)
+    }</span>
       </div>
       <div class="sun-times">
         <span class="sunrise">☀️ ${formatTime(day.sunrise)}</span>
@@ -224,21 +234,21 @@ export function renderForecast(data) {
  * @returns {string} Formatted date
  */
 function formatDate(dateStr) {
-  const date = new Date(dateStr + 'T00:00:00');
+  const date = new Date(dateStr + "T00:00:00");
   const today = new Date();
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
 
   if (date.toDateString() === today.toDateString()) {
-    return 'Today';
+    return "Today";
   } else if (date.toDateString() === tomorrow.toDateString()) {
-    return 'Tomorrow';
+    return "Tomorrow";
   }
 
-  return date.toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric'
+  return date.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
   });
 }
 
@@ -248,9 +258,9 @@ function formatDate(dateStr) {
  * @returns {string} Formatted time
  */
 function formatTime(timeStr) {
-  const [hours, minutes] = timeStr.split(':');
+  const [hours, minutes] = timeStr.split(":");
   const hour = parseInt(hours, 10);
-  const ampm = hour >= 12 ? 'PM' : 'AM';
+  const ampm = hour >= 12 ? "PM" : "AM";
   const hour12 = hour % 12 || 12;
   return `${hour12}:${minutes} ${ampm}`;
 }
@@ -260,10 +270,10 @@ function formatTime(timeStr) {
  * @param {Function} callback - Function to call with valid location input
  */
 export function initLocationForm(callback) {
-  const form = document.querySelector('.location-form');
-  form.addEventListener('submit', (event) => {
+  const form = document.querySelector(".location-form");
+  form.addEventListener("submit", (event) => {
     event.preventDefault();
-    const input = document.querySelector('#location-input');
+    const input = document.querySelector("#location-input");
 
     if (input.checkValidity()) {
       callback(input.value);
@@ -278,7 +288,7 @@ export function initLocationForm(callback) {
  * @param {string} message - Error message to display
  */
 export function showError(message) {
-  const formError = document.querySelector('.form-error');
+  const formError = document.querySelector(".form-error");
   formError.textContent = message;
 }
 
@@ -286,7 +296,7 @@ export function showError(message) {
  * Clears the error message
  */
 export function clearError() {
-  showError('');
+  showError("");
 }
 
 /**
@@ -294,24 +304,22 @@ export function clearError() {
  * @param {Function} callback - Function to call when unit is toggled, receives new unit as parameter
  */
 export function initUnitToggle(callback) {
-  const toggleBtn = document.getElementById('unit-toggle-btn');
+  const toggleBtn = document.getElementById("unit-toggle-btn");
 
   // Set initial button text based on current unit
-  toggleBtn.textContent = currentUnit === 'imperial'
-    ? '°C / km/h'
-    : '°F / mph';
+  toggleBtn.textContent = currentUnit === "imperial" ? "°C / km/h" : "°F / mph";
 
-  toggleBtn.addEventListener('click', () => {
+  toggleBtn.addEventListener("click", () => {
     // Switch unit system
-    currentUnit = currentUnit === 'imperial' ? 'metric' : 'imperial';
+    currentUnit = currentUnit === "imperial" ? "metric" : "imperial";
 
     // Update button text
-    toggleBtn.textContent = currentUnit === 'imperial'
-      ? '°C / km/h'
-      : '°F / mph';
+    toggleBtn.textContent = currentUnit === "imperial"
+      ? "°C / km/h"
+      : "°F / mph";
 
     // Save preference
-    localStorage.setItem('unitPreference', currentUnit);
+    localStorage.setItem("unitPreference", currentUnit);
 
     // Call callback to re-render with new units
     callback(currentUnit);

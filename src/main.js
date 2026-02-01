@@ -1,7 +1,7 @@
-import './style.css'
+import "./style.css";
 
-import * as dom from './dom.js'
-import * as weather from './weather.js'
+import * as dom from "./dom.js";
+import * as weather from "./weather.js";
 
 // Store current weather data for re-rendering when units change
 let currentWeatherData = null;
@@ -32,7 +32,7 @@ dom.initLocationForm(async (location) => {
 });
 
 // Initialize unit toggle button
-dom.initUnitToggle((newUnit) => {
+dom.initUnitToggle(() => {
   // Re-render with new units if we have data
   if (currentWeatherData && currentForecastData) {
     dom.renderCurrentWeather(currentWeatherData);

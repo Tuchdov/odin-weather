@@ -39,7 +39,7 @@ export async function getCurrentData(location) {
     humidity,
     uvindex,
     windspeed,
-    icon
+    icon,
   };
 }
 
@@ -55,18 +55,16 @@ export async function getForecast(location) {
   for (let i = 1; i <= 3; i++) {
     // create an object and push it to the array
     const forecast =
-      (({ datetime, tempmax, tempmin, sunrise, sunset, conditions, icon  }) => ({
+      (({ datetime, tempmax, tempmin, sunrise, sunset, conditions, icon }) => ({
         datetime,
         tempmax,
         tempmin,
         sunrise,
         sunset,
         conditions,
-        icon
+        icon,
       }))(weatherData.days[i]);
     weatherArr.push(forecast);
   }
   return weatherArr;
 }
-
-
