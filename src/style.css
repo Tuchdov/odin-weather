@@ -252,7 +252,15 @@ button:focus-visible,
 }
 
 .unit-toggle {
-  flex-shrink: 0;
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+}
+
+.unit-toggle button {
+  font-size: var(--text-sm);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-full);
 }
 
 /* ===========================================
@@ -275,6 +283,7 @@ button:focus-visible,
 
 /* Current Weather Card (Large) */
 .card--current {
+  position: relative;
   border-radius: var(--radius-lg);
   padding: var(--space-2xl);
   text-align: center;
@@ -558,16 +567,9 @@ button:focus-visible,
     min-width: unset;
   }
 
-  .unit-toggle {
-    width: 100%;
-  }
-
-  .unit-toggle button {
-    width: 100%;
-  }
-
   .card--current {
     padding: var(--space-lg);
+    padding-top: var(--space-2xl);
   }
 
   .card--current .temperature {

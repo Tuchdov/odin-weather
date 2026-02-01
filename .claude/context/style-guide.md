@@ -13,13 +13,14 @@ The app background changes based on current weather conditions:
 
 | Weather | Theme Class | Gradient Start | Gradient End | Text Color |
 |---------|-------------|----------------|--------------|------------|
-| Clear Day | `theme-sunny` | `#FFD93D` | `#6ECCAF` | `#1a1a2e` |
-| Clear Night | `theme-night` | `#1a1a2e` | `#4a1942` | `#ffffff` |
-| Cloudy | `theme-cloudy` | `#94A3B8` | `#64748B` | `#1e293b` |
-| Rainy | `theme-rainy` | `#1E3A5F` | `#3B82F6` | `#ffffff` |
-| Snowy | `theme-snowy` | `#E0F2FE` | `#BAE6FD` | `#0c4a6e` |
-| Stormy | `theme-stormy` | `#4C1D95` | `#374151` | `#ffffff` |
-| Foggy | `theme-foggy` | `#D1D5DB` | `#9CA3AF` | `#1f2937` |
+| Default (Dawn Sky) | (none) | `#2c3e50` | `#3498db` | `#ffffff` |
+| Clear Day | `theme-sunny` | `#f6d365` | `#fda085` | `#2d3748` |
+| Clear Night | `theme-night` | `#0f0c29` | `#302b63` | `#ffffff` |
+| Cloudy | `theme-cloudy` | `#bdc3c7` | `#2c3e50` | `#ffffff` |
+| Rainy | `theme-rainy` | `#4facfe` | `#00f2fe` | `#1a365d` |
+| Snowy | `theme-snowy` | `#e6e9f0` | `#eef1f5` | `#2d3748` |
+| Stormy | `theme-stormy` | `#232526` | `#414345` | `#ffffff` |
+| Foggy | `theme-foggy` | `#c9d6ff` | `#e2e2e2` | `#2d3748` |
 
 ### Glassmorphism Properties
 

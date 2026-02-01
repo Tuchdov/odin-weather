@@ -84,6 +84,9 @@ export function showSkeletonLoading() {
 
   weatherContent.classList.add('is-loading');
 
+  // Preserve the unit toggle button
+  const toggle = currentCard.querySelector('.unit-toggle');
+
   // Create skeleton for current weather
   currentCard.innerHTML = `
     <div class="skeleton-current">
@@ -101,6 +104,11 @@ export function showSkeletonLoading() {
       </div>
     </div>
   `;
+
+  // Re-insert the toggle button
+  if (toggle) {
+    currentCard.insertBefore(toggle, currentCard.firstChild);
+  }
 
   // Create skeleton for forecast cards
   forecastGrid.innerHTML = '';
@@ -146,6 +154,9 @@ export function renderCurrentWeather(data) {
   // Set weather theme
   setWeatherTheme(data.icon);
 
+  // Preserve the unit toggle button before re-rendering
+  const toggle = card.querySelector('.unit-toggle');
+
   // Render card content
   card.innerHTML = `
     <h2 class="location">${data.resolvedAddress}</h2>
@@ -161,6 +172,11 @@ export function renderCurrentWeather(data) {
       <p class="windspeed">Wind: ${formatWindSpeed(data.windspeed, currentUnit)}</p>
     </div>
   `;
+
+  // Re-insert the toggle button
+  if (toggle) {
+    card.insertBefore(toggle, card.firstChild);
+  }
 }
 
 /**
@@ -282,8 +298,8 @@ export function initUnitToggle(callback) {
 
   // Set initial button text based on current unit
   toggleBtn.textContent = currentUnit === 'imperial'
-    ? 'Switch to Metric (°C, km/h)'
-    : 'Switch to Imperial (°F, mph)';
+    ? '°C / km/h'
+    : '°F / mph';
 
   toggleBtn.addEventListener('click', () => {
     // Switch unit system
@@ -291,8 +307,8 @@ export function initUnitToggle(callback) {
 
     // Update button text
     toggleBtn.textContent = currentUnit === 'imperial'
-      ? 'Switch to Metric (°C, km/h)'
-      : 'Switch to Imperial (°F, mph)';
+      ? '°C / km/h'
+      : '°F / mph';
 
     // Save preference
     localStorage.setItem('unitPreference', currentUnit);

@@ -11,42 +11,37 @@
       <!-- Search Header -->
       <header class="search-header">
         <form class="location-form">
-          <label for="location-input">Search location</label>
+          <label for="location-input"> <h3>Search location</h3> </label>
           <input
             type="text"
             id="location-input"
             name="location"
-            pattern="[A-Za-z\s]+"
+            pattern="[A-Za-z ]+"
             minlength="2"
             placeholder="Enter city name..."
             title="Letters and spaces only"
             required
+            autofocus
           >
           <button type="submit">Search</button>
           <p class="form-error" aria-live="polite"></p>
         </form>
-        <div class="unit-toggle">
-          <button id="unit-toggle-btn" type="button">
-            Switch to Metric (°C, km/h)
-          </button>
-        </div>
       </header>
 
       <!-- Weather Content -->
       <section class="weather-content">
         <!-- Current Weather Card -->
         <article class="card card--current" aria-label="Current weather">
-          <h2 class="location"></h2>
-          <div class="current-main">
-            <span class="temperature"></span>
-            <span class="conditions-icon" aria-hidden="true"></span>
+          <div class="unit-toggle">
+            <button id="unit-toggle-btn" type="button">
+              °C / km/h
+            </button>
           </div>
-          <p class="conditions"></p>
-          <div class="current-details">
-            <p class="feelslike"></p>
-            <p class="humidity"></p>
-            <p class="uvindex"></p>
-            <p class="windspeed"></p>
+          <!-- Welcome state (shown initially) -->
+          <div class="welcome-state">
+            <span class="welcome-icon" aria-hidden="true">🌤️</span>
+            <h2 class="welcome-title">Welcome to yet another weather app</h2>
+            <p class="welcome-text">Enter a city name above to see current conditions and a 3-day forecast</p>
           </div>
         </article>
 
