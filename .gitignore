@@ -25,3 +25,6 @@ dist-ssr
 
 # project instructions 
 meta-weather/
+
+CODE_REVIEW.md
+.env

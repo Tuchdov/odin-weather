@@ -10,7 +10,10 @@
       "mcp__playwright__browser_evaluate",
       "mcp__playwright__browser_network_requests",
       "mcp__playwright__browser_hover",
-      "mcp__playwright__browser_close"
+      "mcp__playwright__browser_close",
+      "Bash(mcp__playwright__browser_navigate:*)",
+      "Bash(npm install:*)",
+      "Bash(node:*)"
     ]
   }
 }
