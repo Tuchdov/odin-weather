@@ -10,9 +10,9 @@ export async function getWeatherData(location) {
 
   const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 
-  if (!API_KEY) {
-    throw new Error('Weather API key is not configured');
-  }
+if (!API_KEY) {
+  throw new Error('Weather API key is not configured');
+}
   const response = await fetch(
     `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}?key=${API_KEY}`,
   );
