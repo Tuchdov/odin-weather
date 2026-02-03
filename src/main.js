@@ -1,7 +1,7 @@
-import "./style.css";
+import './style.css'
 
-import * as dom from "./dom.js";
-import * as weather from "./weather.js";
+import * as dom from './dom.js'
+import * as weather from './weather.js'
 
 // Store current weather data for re-rendering when units change
 let currentWeatherData = null;
@@ -14,8 +14,9 @@ dom.initLocationForm(async (location) => {
     // Show skeleton loading state
     dom.showSkeletonLoading();
 
-    const current = await weather.getCurrentData(location);
-    const forecast = await weather.getForecast(location);
+    const weatherData = await weather.getWeatherData(location);
+    const current = weather.extractCurrentData(weatherData);
+    const forecast = weather.extractForecastData(weatherData);
 
     // Store data for unit toggle
     currentWeatherData = current;
