@@ -1,4 +1,3 @@
-"use strict";
 
 // Unit system state
 let currentUnit = localStorage.getItem("unitPreference") || "imperial";
